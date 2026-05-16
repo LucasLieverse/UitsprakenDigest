@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-blue:        #2081C3;
+  --brand-terracotta:  #A63D33;
+  --brand-darkred:     #73241D;
+  --brand-olive:       #C0BDA5;
+  --brand-darkgray:    #262626;
+  --brand-lightgray:   #D9D9D9;
+  --brand-white:       #FFFFFF;
+  --brand-bg:          #F3F4F6;
+  --brand-bg-blue:     #EFF6FB;
+  --brand-bg-red:      #FDF3F2;
+  --fg-1:              #262626;
+  --fg-2:              rgba(38,38,38,0.7);
+  --radius-brand:      12px;
+  --shadow-brand:      3px 4px 12px rgba(0,0,0,0.12);
+  --shadow-brand-hover:4px 6px 16px rgba(0,0,0,0.16);
+  --ease-out:          cubic-bezier(0.16,1,0.3,1);
+}
+
+html, body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--fg-1);
+  background: var(--brand-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
