@@ -1,10 +1,10 @@
-# SchikkingDigest
+# UitsprakenDigest op het gebied van schikkingsonderhandelingen
 
 Een wekelijkse digest van Nederlandse rechtspraak over schikkingen en minnelijke regelingen, samengesteld voor procesjuristen.
 
 De app haalt wekelijks automatisch uitspraken op uit het civiele recht en het advocatentuchtrecht, filtert ze op relevantie voor de schikkingspraktijk met behulp van Claude AI, en toont de resultaten als overzichtelijke kaarten met een groeiende lessenlijst.
 
-Bekijk de live versie op [schikkenopdegang.nl](https://www.schikkenopdegang.nl).
+Bekijk de live versie op [schikkenopdegang.nl](https://www.schikkenopdegang.nl/uitspraken).
 
 ---
 
@@ -28,7 +28,7 @@ Bekijk de live versie op [schikkenopdegang.nl](https://www.schikkenopdegang.nl).
 | Styling | Tailwind CSS |
 | AI | Anthropic Claude (`claude-sonnet-4-6`) |
 | Opslag | Vercel Blob |
-| Deployment | Vercel (Hobby) |
+| Deployment | Vercel |
 | Scheduling | Vercel Cron Jobs |
 
 ---

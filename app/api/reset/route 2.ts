@@ -3,8 +3,8 @@ import { put } from '@vercel/blob';
 
 export const maxDuration = 30;
 
-const BLOB_DIGEST = 'uitspraken-digest/latest.json';
-const BLOB_LESSEN = 'uitspraken-digest/lessen.json';
+const BLOB_DIGEST = 'schikking-digest/latest.json';
+const BLOB_LESSEN = 'schikking-digest/lessen.json';
 const OPTS = { access: 'public' as const, contentType: 'application/json', addRandomSuffix: false, allowOverwrite: true };
 
 export async function POST(req: NextRequest) {

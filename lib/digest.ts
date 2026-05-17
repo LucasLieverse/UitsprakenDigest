@@ -4,8 +4,8 @@ import { fetchTuchtrecht } from '@/lib/tuchtrecht';
 import { processItems } from '@/lib/claude';
 import { DigestResponse, Les, LessenStore } from '@/types';
 
-const BLOB_DIGEST = 'schikking-digest/latest.json';
-const BLOB_LESSEN = 'schikking-digest/lessen.json';
+const BLOB_DIGEST = 'uitspraken-digest/latest.json';
+const BLOB_LESSEN = 'uitspraken-digest/lessen.json';
 
 async function readBlob<T>(key: string): Promise<T | null> {
   const meta = await head(key).catch(() => null);
