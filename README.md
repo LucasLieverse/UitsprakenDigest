@@ -4,7 +4,7 @@ Een wekelijkse digest van Nederlandse rechtspraak over schikkingen en minnelijke
 
 De app haalt wekelijks automatisch uitspraken op uit het civiele recht en het advocatentuchtrecht, filtert ze op relevantie voor de schikkingspraktijk met behulp van Claude AI, en toont de resultaten als overzichtelijke kaarten met een groeiende lessenlijst.
 
-Bekijk de live versie op [schikkenopdegang.nl](https://www.schikkenopdegang.nl/uitspraken).
+Bekijk de [live versie](https://uitspraken-digest.vercel.app). Meer lezen over de civielrechtelijke schikkingspraktijk in Nederland? Bekijk [schikkenopdegang.nl](https://www.schikkenopdegang.nl/uitspraken)
 
 ---
 
