@@ -1,4 +1,4 @@
-# UitsprakenDigest op het gebied van schikkingsonderhandelingen
+# Wekelijkse digest op het gebied van schikkingsonderhandelingen
 
 Een wekelijkse digest van Nederlandse rechtspraak over schikkingen en minnelijke regelingen, samengesteld voor procesjuristen.
 
