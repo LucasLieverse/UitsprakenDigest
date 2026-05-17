@@ -1,6 +1,6 @@
 # Wekelijkse digest op het gebied van schikkingsonderhandelingen
 
-Een wekelijkse digest van Nederlandse rechtspraak over schikkingen en minnelijke regelingen, samengesteld voor procesjuristen.
+Een wekelijkse digest van Nederlandse (tucht)rechtspraak over schikkingen en minnelijke regelingen, samengesteld voor procesjuristen.
 
 De app haalt wekelijks automatisch uitspraken op uit het civiele recht en het advocatentuchtrecht, filtert ze op relevantie voor de schikkingspraktijk met behulp van Claude AI, en toont de resultaten als overzichtelijke kaarten met een groeiende lessenlijst.
 
