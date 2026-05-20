@@ -68,7 +68,7 @@ export default function Home() {
     setLoading(true);
     setFout(null);
     try {
-      const res = await fetch('/api/digest');
+      const res = await fetch('/api/digest', { cache: 'no-store' });
       const data: DigestResponse & { fout?: string } = await res.json();
       if (data.fout) { setFout(data.fout); return; }
       if (data.ophaalDatum) {
@@ -195,7 +195,7 @@ export default function Home() {
           <summary className="cursor-pointer list-none flex items-start gap-2 marker:hidden">
             <Info size={14} className="text-brand-blue shrink-0 mt-0.5" />
             <span>
-              De uitspraken zijn geautomatiseerd opgehaald en samengevat. Lees voordat je je daarop beroept altijd de volledige tekst.
+              De uitspraken op deze pagina worden wekelijks (elke donderdagochtend) geautomatiseerd opgehaald en samengevat. Lees voordat je je daarop beroept altijd de volledige tekst.
               <span className="ml-1 text-brand-blue font-semibold underline underline-offset-2 group-open:hidden">Hoe werkt dit en wat betekent dat?</span>
             </span>
           </summary>
@@ -327,7 +327,7 @@ export default function Home() {
             {lessen.length > 0 ? (
               lessenSort === 'categorie' ? (
                 <div className="space-y-6">
-                  {(['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Hoedanigheid advocaat', 'Overig'] as const).map(cat => {
+                  {(['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Afbreken onderhandelingen', 'Misleiding en bedrog', 'Vertegenwoordiging en binding', 'Executie en executoriale titel', 'Mediation en vertrouwelijkheid', 'Hoedanigheid advocaat', 'Overig'] as const).map(cat => {
                     const groep = lessen.filter(l => (l.categorie ?? 'Overig') === cat);
                     if (groep.length === 0) return null;
                     return (
@@ -389,6 +389,30 @@ export default function Home() {
         )}
 
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-black/10 mt-8 py-6 px-6 text-center text-xs text-brand-darkgray/40 space-y-1.5">
+        <p>Uitspraken digest maakt gebruik van kunstmatige intelligentie. Controleer de output.</p>
+        <p className="flex items-center justify-center gap-3">
+          <a
+            href="https://github.com/LucasLieverse/UitsprakenDigest.git"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-brand-darkgray transition-colors underline underline-offset-2"
+          >
+            GitHub
+          </a>
+          <span>·</span>
+          <a
+            href="https://www.schikkenopdegang.nl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-brand-darkgray transition-colors underline underline-offset-2"
+          >
+            schikkenopdegang.nl
+          </a>
+        </p>
+      </footer>
     </main>
   );
 }

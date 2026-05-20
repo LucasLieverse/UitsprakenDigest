@@ -46,6 +46,11 @@ export type LesCategorie =
   | 'Schikkingsadvies'
   | 'Vaststellingsovereenkomst'
   | 'Onderhandelingen'
+  | 'Afbreken onderhandelingen'
+  | 'Misleiding en bedrog'
+  | 'Vertegenwoordiging en binding'
+  | 'Executie en executoriale titel'
+  | 'Mediation en vertrouwelijkheid'
   | 'Hoedanigheid advocaat'
   | 'Overig';
 

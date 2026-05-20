@@ -94,7 +94,7 @@ Antwoord uitsluitend in dit JSON-formaat:
   "feiten": "kern van het geschil in max 2 zinnen — begin met wat er fout ging of waar het om draaide",
   "oordeel": "uitkomst eerst, dan de grond, max 2-4 zinnen",
   "relevantie": "twee tot vier zinnen: eerste zin de concrete les of het risico, tweede zin de praktische implicatie. Geen imperatief. Gebruik 'het is verstandig om', 'het loont' of vergelijkbaar.",
-  "categorie": "één van: 'Schikkingsadvies' | 'Vaststellingsovereenkomst' | 'Onderhandelingen' | 'Hoedanigheid advocaat' | 'Overig'"
+  "categorie": "één van: 'Schikkingsadvies' | 'Vaststellingsovereenkomst' | 'Onderhandelingen' | 'Afbreken onderhandelingen' | 'Misleiding en bedrog' | 'Vertegenwoordiging en binding' | 'Executie en executoriale titel' | 'Mediation en vertrouwelijkheid' | 'Hoedanigheid advocaat' | 'Overig'"
 }
 
 Of als niet relevant:
@@ -126,7 +126,7 @@ Of als niet relevant:
 
     if (!result.relevant || !result.headline || !result.feiten || !result.oordeel || !result.relevantie) return null;
     const les = korteLes(result.relevantie!);
-    const CATEGORIEEN = ['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Hoedanigheid advocaat', 'Overig'] as const;
+    const CATEGORIEEN = ['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Afbreken onderhandelingen', 'Misleiding en bedrog', 'Vertegenwoordiging en binding', 'Executie en executoriale titel', 'Mediation en vertrouwelijkheid', 'Hoedanigheid advocaat', 'Overig'] as const;
     type Cat = typeof CATEGORIEEN[number];
     const categorie: Cat = CATEGORIEEN.includes(result.categorie as Cat) ? (result.categorie as Cat) : 'Overig';
 

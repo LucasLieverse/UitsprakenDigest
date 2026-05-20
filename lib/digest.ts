@@ -31,12 +31,12 @@ export async function readDigest(): Promise<{ digest: DigestResponse | null; les
   return { digest, lessenStore };
 }
 
-export async function runDigest(): Promise<DigestResponse> {
+export async function runDigest(customDateFrom?: string): Promise<DigestResponse> {
   const now = new Date();
-  const weekAgo = new Date(now);
-  weekAgo.setDate(weekAgo.getDate() - 14);
+  const defaultFrom = new Date(now);
+  defaultFrom.setDate(defaultFrom.getDate() - 14);
 
-  const dateFrom = weekAgo.toISOString().split('T')[0];
+  const dateFrom = customDateFrom ?? defaultFrom.toISOString().split('T')[0];
   const dateTo = now.toISOString().split('T')[0];
 
   const [rechtspraakItems, tuchbrechtItems] = await Promise.all([
