@@ -13,17 +13,24 @@ Relevantiecriteria (uitspraak is alleen relevant als minimaal één criterium ge
 - Gedrag rond schikkingsonderhandelingen of vaststellingsovereenkomst is kern van het geschil
 - Uitspraak bevat een duidelijke les over schikken of onderhandelen die een advocaat iets bruikbaars leert, ook als dat niet het enige of meest relevante thema is
 
+Stem en toon (stijl van schikkenopdegang.nl):
+Je schrijft als een betrokken vakgenoot die rechters en advocaten bijpraat over de civiele schikkingspraktijk. Academisch maar leesbaar, collegiaal en niet belerend. Je schrijft niet boven de lezer, maar naast de lezer. Juridisch jargon alleen als het functioneel is.
+
 Schrijfregels voor de samenvattingsvelden:
-- Headline: concreet en actief, benoem wat er speelt niet wie de partijen zijn. Max 8 woorden.
-- Feiten: begin met de kern van het geschil. Geen achtergrond die er niet toe doet. Max 2 zinnen.
-- Oordeel: uitkomst eerst, dan de grond. Geen juridisch jargon tenzij onvermijdelijk. Max 3 zinnen.
-- Relevantie: twee tot vier afzonderlijke zinnen. Eerste zin: de concrete les of het risico, direct geformuleerd vanuit het perspectief van de advocaat-lezer ("Je kunt...", "Als je... dan...", "Een rechter oordeelt..."). Tweede zin: de praktische implicatie, zonder imperatief — gebruik 'het is verstandig om', 'het loont' of vergelijkbaar.
+- Headline: zakelijk en concreet, benoem de rechtsvraag of de kern van wat er speelt, niet wie de partijen zijn. Geen clickbait, geen vraagvorm, geen uitroepteken. Max 8 woorden.
+- Feiten: begin direct met waar het om draaide. Geen achtergrond die er niet toe doet. Noem partijen functioneel (werkgever, cliënt, verzekeraar), niet bij naam. Max 2 zinnen.
+- Oordeel: uitkomst eerst, dan de dragende grond. Bed wetsartikelen zonder omhaal in de zin in (bijvoorbeeld "art. 7:900 BW"). Max 3 zinnen.
+- Relevantie: twee of drie zinnen, nooit meer, vertaald naar de schikkingspraktijk. Elke zin bevat één gedachte; liever twee korte zinnen dan één lange met een puntkomma. De eerste zin is zelfstandig leesbaar als de kernles van de uitspraak, want die wordt los getoond. Daarna de praktische betekenis voor wie aan de onderhandelingstafel of op de gang staat. Benoem het kort als de les sterk afhangt van de omstandigheden van dit geval. Schrijf niet in de eerste persoon (geen "ik", "mijn duiding"). Geen imperatieven en geen "moet"; liever "het loont om", "dat pleit ervoor om", "wie ... doet er goed aan ...".
+- Gebruik geen puntkomma's in de veldwaarden.
 
 Stijlregels die altijd gelden:
-- Laat bij het redigeren zien dat jede hele uitspraak hebt gelezen. Als de tekst te beperkt is voor een goed oordeel, geef dan relevant: false terug.
-- Gebruik NOOIT een gedachtestreepje (—), en-dash (–) of koppelteken (-) om zinsdelen aan elkaar te plakken. Maak er altijd twee zinnen van of gebruik een komma. Koppeltekens zijn alleen toegestaan binnen samengestelde woorden (bijvoorbeeld "niet-tijdige").
-- Geen opsommingstekens in de veldwaarden.
-- Schrijf toegankelijk en direct. Vermijd formeel-juridische zinsconstructies als "Een tuchtrechtelijke aansprakelijkheid veronderstelt dat...". Schrijf liever "Je kunt een advocaat aansprakelijk stellen als...".
+- Lees de hele uitspraak voordat je oordeelt. Als de tekst te beperkt is voor een goed oordeel, geef dan relevant: false terug.
+- Afwisseling van korte, bondige zinnen en iets langere verklarende zinnen. Een korte zin voor nadruk mag ("Partijautonomie staat voorop.").
+- Actieve constructies. Geen "er kan worden gesteld dat" of "het is belangrijk op te merken dat".
+- Gebruik NOOIT een gedachtestreepje (—) of en-dash (–), en geen koppelteken (-) om zinsdelen aan elkaar te plakken. Gebruik een komma, dubbele punt, puntkomma of een nieuwe zin. Koppeltekens alleen binnen samengestelde woorden (bijvoorbeeld "niet-tijdige").
+- Geen vertaalde Engelse constructies ("dit stelt ons in staat om" wordt "hiermee kan"). Engelse begrippen (BATNA, settlement) alleen als ze uitgelegd of vertaald worden.
+- Geen opsommingstekens, emojis, uitroeptekens, vetdruk of markdown in de veldwaarden.
+- Geen marketingtaal en geen afsluitende zin die herhaalt wat al gezegd is.
 
 Antwoord altijd in het gevraagde JSON-formaat, zonder extra tekst.`;
 
@@ -73,8 +80,8 @@ export async function processItem(item: RawItem): Promise<DigestItem | null> {
 
   const bronContext =
     item.bron === 'tuchtrecht'
-      ? 'Bron: tuchtrecht (advocaten). Relevant als schikking of de rol van de advocaat in een schikkingsproces een significant element is in de klacht of het oordeel — het hoeft niet het enige thema te zijn.'
-      : 'Bron: civiel recht. Relevant als de uitspraak een advocaat iets bruikbaars leert over schikkingen, vaststellingsovereenkomsten, minnelijke regelingen, finale kwijting of onderhandelingen — ook als dat één van meerdere thema\'s is. Niet relevant als schikking alleen terloops wordt genoemd zonder dat de rechter er iets inhoudelijk relevants over zegt.';
+      ? 'Bron: tuchtrecht (advocaten). Relevant als schikking of de rol van de advocaat in een schikkingsproces een significant element is in de klacht of het oordeel. Het hoeft niet het enige thema te zijn.'
+      : 'Bron: civiel recht. Relevant als de uitspraak een advocaat iets bruikbaars leert over schikkingen, vaststellingsovereenkomsten, minnelijke regelingen, finale kwijting of onderhandelingen, ook als dat één van meerdere thema\'s is. Niet relevant als schikking alleen terloops wordt genoemd zonder dat de rechter er iets inhoudelijk relevants over zegt. Altijd niet relevant: zaken over de wettelijke schuldsaneringsregeling (Wsnp, art. 284 e.v. Fw), zoals toelating, moratorium, voorlopige voorziening tegen ontruiming of een dwangakkoord (art. 287a Fw). Het minnelijk schuldhulptraject is geen schikking in een civiel geschil.';
 
   const prompt = `Beoordeel deze uitspraak op relevantie voor de schikkingspraktijk.
 
@@ -90,10 +97,10 @@ Antwoord uitsluitend in dit JSON-formaat:
 {
   "relevant": true,
   "reden": "één zin: waarom dit de relevantiedrempel haalt",
-  "headline": "concreet, actief, max 8 woorden",
-  "feiten": "kern van het geschil in max 2 zinnen — begin met wat er fout ging of waar het om draaide",
-  "oordeel": "uitkomst eerst, dan de grond, max 2-4 zinnen",
-  "relevantie": "twee tot vier zinnen: eerste zin de concrete les of het risico, tweede zin de praktische implicatie. Geen imperatief. Gebruik 'het is verstandig om', 'het loont' of vergelijkbaar.",
+  "headline": "zakelijk en concreet, max 8 woorden",
+  "feiten": "kern van het geschil in max 2 zinnen, begin met waar het om draaide",
+  "oordeel": "uitkomst eerst, dan de dragende grond, max 3 zinnen",
+  "relevantie": "twee of drie zinnen: eerste zin de zelfstandig leesbare kernles, daarna de betekenis voor de schikkingspraktijk, met eerlijke nuance waar de les van de omstandigheden afhangt",
   "categorie": "één van: 'Schikkingsadvies' | 'Vaststellingsovereenkomst' | 'Onderhandelingen' | 'Afbreken onderhandelingen' | 'Misleiding en bedrog' | 'Vertegenwoordiging en binding' | 'Executie en executoriale titel' | 'Mediation en vertrouwelijkheid' | 'Hoedanigheid advocaat' | 'Overig'"
 }
 
@@ -106,12 +113,12 @@ Of als niet relevant:
   let text: string;
   try {
     const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
+      model: 'claude-sonnet-5-5',
+      max_tokens: 4000,
       system: SYSTEM_PROMPT,
       messages: [{ role: 'user', content: prompt }],
     });
-    text = message.content[0].type === 'text' ? message.content[0].text : '';
+    text = message.content.find((b) => b.type === 'text')?.text ?? '';
   } catch (err) {
     console.error(`Claude fout voor ${id}:`, err);
     return null;
@@ -169,11 +176,11 @@ ${JSON.stringify(nieuw, null, 2)}`;
 
   try {
     const message = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 4000,
+      model: 'claude-sonnet-5-5',
+      max_tokens: 16000,
       messages: [{ role: 'user', content: prompt }],
     });
-    const text = message.content[0].type === 'text' ? message.content[0].text : '';
+    const text = message.content.find((b) => b.type === 'text')?.text ?? '';
     const match = text.match(/\[[\s\S]*\]/);
     if (!match) return [...bestaand, ...nieuw];
     return JSON.parse(match[0]) as Les[];
