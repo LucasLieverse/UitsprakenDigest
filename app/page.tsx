@@ -310,7 +310,7 @@ export default function Home() {
               {' '}(advocatuur) opgehaald op zoekwoorden rond schikken en minnelijke regelingen.
             </p>
             <p>AI (Claude) beoordeelt vervolgens of de uitspraak iets bruikbaars leert over de schikkingspraktijk en schrijft een korte samenvatting.</p>
-            <p>Twee beperkingen om in gedachten te houden. Ten eerste werkt de tool met zoekwoorden, dus uitspraken waarin schikken centraal staat, maar het woord zelf niet voorkomt kunnen worden gemist. Ten tweede kan AI nuances missen of een uitspraak verkeerd interpreteren of uitlegge.</p>
+            <p>Twee beperkingen om in gedachten te houden. Ten eerste werkt de tool met zoekwoorden, dus uitspraken waarin schikken centraal staat, maar het woord zelf niet voorkomt, kunnen worden gemist. Ten tweede kan AI nuances missen of een uitspraak verkeerd interpreteren of uitleggen.</p>
             <button
               type="button"
               onClick={() => { if (disclaimerRef.current) disclaimerRef.current.open = false; }}
