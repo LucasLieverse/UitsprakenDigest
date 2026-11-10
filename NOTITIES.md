@@ -1,46 +1,37 @@
 # Werknotities
 
-Stand van zaken, bijgewerkt 10 november 2026.
+Stand van zaken, bijgewerkt 10 november 2026. Alles hieronder is gecommit en staat online, tenzij anders vermeld.
 
 ## Waar we staan
 
-**Online (Vercel, productie):**
-- Samenvattingen in de stijl van schikkenopdegang.nl, met Sonnet 5.5 (`claude-sonnet-5-5`).
+**Samenvattingen (wekelijkse run, donderdag 07:00 UTC):**
+- Sonnet 5.5 (`claude-sonnet-5-5`), schrijft in de stijl van schikkenopdegang.nl.
+- Claude leest de volledige uitspraak (tot 40.000 tekens), ook bij tuchtrecht. Eerst was dat 5.000 tekens, en bij tuchtrecht alleen de korte beschrijving.
+- Prompts: de les baseren op wat de rechter zelf oordeelt, doorslaggevende omstandigheden noemen, niet verder generaliseren dan de uitspraak toelaat. Geen "geen X, maar Y"-constructies.
 - Wsnp-zaken (schuldsanering) worden altijd als niet relevant beoordeeld.
-- Digest van 22 okt t/m 5 nov opnieuw gedraaid in de nieuwe stijl.
+- Nieuwe lessen worden samengevoegd met bestaande lessen die hetzelfde zeggen (`mergeLessen`). Lessen over vaststellingsovereenkomsten krijgen een subthema.
+- `maxDuration` van de digest- en cron-route staat op 300 seconden (Vercel Pro).
 
-**Al in de opslag (Vercel Blob), dus live zichtbaar:**
-- Lessen samengevoegd: van 61 naar 50, alle 61 uitspraken nog gekoppeld, herschreven in de nieuwe stijl.
-- Lessen over vaststellingsovereenkomsten hebben een `subthema` (4 vaste subthema's, zie `VSO_SUBTHEMAS` in `types/index.ts`).
-- Back-up van vóór het samenvoegen: scratchpad van de sessie van 9 nov (tijdelijk, kan weg zijn).
-
-**Alleen lokaal, nog niet gecommit of uitgerold:**
-- `app/page.tsx`: "Lessen tot nu toe" als tegels per categorie (aantal plus sterkste les als voorproef). Een klik opent de categorie, met subthema-tussenkoppen bij Vaststellingsovereenkomst. Lessen als losse kaartjes met bronlabels (headline plus datum).
-- `lib/claude.ts`: `mergeLessen` groepeert lessen via indexnummers, de bronnen worden in code gekoppeld. Kent ook subthema's toe.
-- `lib/digest.ts`: de wekelijkse run roept `mergeLessen` aan, zodat nieuwe lessen bij bestaande komen.
-- `maxDuration` van de digest- en cron-route verhoogd naar 300 seconden (Vercel Pro).
-
-**Controle tegen de uitspraken (10 nov):**
-- Alle lessen zijn vergeleken met de volledige tekst van de uitspraken. Vóór correctie klopten er 4 van de 50. De oorzaak: het oude model zag maar 5.000 tekens (tuchtrecht alleen de korte beschrijving), en het samenvoegen generaliseerde te ver.
-- Teksten en categorieën zijn gecorrigeerd en twee keer opnieuw gecontroleerd. 9 lessen zonder schikkingsles zijn verwijderd, onder meer Wsnp, ontslag op staande voet en enquête. Er staan nu 41 lessen in. Na de hercontrole zijn er nog 4 "deels", die niet verder zijn nagelopen.
-- Code: Claude krijgt nu de volledige uitspraak (tot 40.000 tekens), ook bij tuchtrecht. De prompts vragen om niet verder te generaliseren dan de uitspraak.
-- Back-ups en rapporten staan in de scratchpad van de sessie (tijdelijk). Het rapport van vóór de correctie staat in `CONTROLE-LESSEN.md` (niet in git).
-
-**Opgeschoond en vlot herschreven (10 nov):** de vier lessen die deels klopten zijn aangepast of verwijderd, net als de les over gevolmachtigden, die niet over schikken ging. 28 lessen zijn vlotter herschreven in de schikkenopdegang-stijl, elk opnieuw gecontroleerd tegen de uitspraak. 10 lessen haalden de controle in herschreven vorm niet en hebben hun vorige, al gecontroleerde tekst gehouden. Er staan nu 38 lessen in.
-
-Let op het tegoed: de API-credits raakten op 10 nov op door de controles. Automatisch bijladen is verstandig, anders valt de wekelijkse run stil.
+**Lessen tot nu toe (38):**
+- Weergave: tegels per categorie met voorproef. Een klik opent de categorie, met subthema-kopjes bij Vaststellingsovereenkomst.
+- Alle lessen zijn gecontroleerd tegen de volledige tekst van de uitspraken, waar nodig gecorrigeerd en daarna opnieuw gecontroleerd.
+- Lessen zonder schikkingsles zijn verwijderd (onder meer Wsnp, ontslag op staande voet, enquête, gevolmachtigden).
+- 28 lessen zijn vlot herschreven in de schikkenopdegang-stijl en elk opnieuw gecontroleerd. 10 lessen hebben hun vorige, al gecontroleerde tekst gehouden.
 
 ## Volgende stappen
 
-1. Lokaal nakijken (`npm run dev`), daarna committen en uitrollen met `npx vercel --prod`.
-2. Overwegen: Git koppelen in Vercel ("Connect Git"), zodat elke push naar `main` automatisch online gaat. Nu gebeurt dat niet.
-3. Na de eerste donderdag-run (cron, 07:00 UTC) controleren of het samenvoegen binnen de tijd blijft en of de lessen goed zijn ingedeeld.
-4. Opruimen: de oude map `~/Documents/Coding/SchikkingDigest` (iCloud) en de dubbele bestanden met " 2" in de naam onder `app/api/`.
+1. Na de eerste donderdag-run (12 nov) controleren: blijft hij binnen 300 seconden, zijn de nieuwe lessen goed, en is het samenvoegen niet te ruim?
+2. Git koppelen in Vercel ("Connect Git"), zodat elke push naar `main` automatisch online gaat. Nu moet je met de hand uitrollen: `npx vercel --prod`.
+3. Automatisch bijladen van API-tegoed instellen (console.anthropic.com → Plans & Billing). Het tegoed raakte op 10 nov op door de controles.
+4. De regel tegen "geen X, maar Y" ook in de skill `schikkenopdegang-stijl` zetten via de claude.ai-instellingen. De lokale kopie is aangepast, maar dat wordt bij synchronisatie overschreven.
+5. Opruimen: de oude map `~/Documents/Coding/SchikkingDigest` (iCloud) en de dubbele bestanden met " 2" in de naam onder `app/api/`.
 
 ## Goed om te weten
 
-- Het project staat sinds 9 nov in `~/code/SchikkingDigest` en niet meer in Documents, omdat iCloud-synchronisatie git verstoorde.
-- GitHub-repo heet nu `LucasLieverse/UitsprakenDigest`. Het Vercel-project heet intern `schikken-digest`, het adres is `uitspraken-digest.vercel.app`.
+- Het project staat sinds 9 nov in `~/code/SchikkingDigest`, buiten iCloud, omdat de synchronisatie git verstoorde.
+- GitHub: `LucasLieverse/UitsprakenDigest`. Vercel-project intern `schikken-digest`, adres `uitspraken-digest.vercel.app`.
+- `.env.local` schrijft direct naar de productie-opslag (Vercel Blob). Lokale scripts wijzigen dus de live site.
 - Sonnet 5.5 begint het antwoord met een denkblok. Lees daarom het tekstblok uit (`content.find(b => b.type === 'text')`), niet `content[0]`.
 - `max_tokens` boven ongeveer 21.000 zonder streaming wordt door de SDK geweigerd.
-- `.env.local` heeft een lokale `ANTHROPIC_API_KEY` en schrijft direct naar de productie-opslag. Lokale scripts wijzigen dus de live site.
+- Controles met volledige uitspraken zijn duur: elke les kost meerdere aanroepen van 10.000 tokens of meer.
+- `CONTROLE-LESSEN.md` (niet in git) bevat het controlerapport van vóór de correcties.
