@@ -1,7 +1,7 @@
 import { put, head } from '@vercel/blob';
 import { fetchRechtspraak } from '@/lib/rechtspraak';
 import { fetchTuchtrecht } from '@/lib/tuchtrecht';
-import { processItems } from '@/lib/claude';
+import { processItems, mergeLessen } from '@/lib/claude';
 import { DigestResponse, Les, LessenStore } from '@/types';
 
 const BLOB_DIGEST = 'uitspraken-digest/latest.json';
@@ -81,13 +81,14 @@ export async function runDigest(customDateFrom?: string): Promise<DigestResponse
 
   const bestaandeEclis = new Set(bestaandeLessen.flatMap(l => l.bronnen.map(b => b.id)));
 
-  const gemergedeLessen = [...bestaandeLessen];
+  const echtNieuw: Les[] = [];
   for (const nieuw of nieuweLessen) {
     const nieuwId = nieuw.bronnen[0]?.id;
     if (nieuwId && bestaandeEclis.has(nieuwId)) continue;
-    gemergedeLessen.push(nieuw);
+    echtNieuw.push(nieuw);
     if (nieuwId) bestaandeEclis.add(nieuwId);
   }
+  const gemergedeLessen = await mergeLessen(bestaandeLessen, echtNieuw);
 
   const lessenStore: LessenStore = {
     aanvangsDatum,

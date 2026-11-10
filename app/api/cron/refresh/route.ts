@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runDigest } from '@/lib/digest';
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function GET(req: NextRequest) {
   // Vercel cron jobs zenden Authorization: Bearer <CRON_SECRET> mee zodra die env var is gezet.

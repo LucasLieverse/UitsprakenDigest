@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { RefreshCw, Lock, Info } from 'lucide-react';
+import { RefreshCw, Lock, Info, ExternalLink, ArrowLeft, ArrowRight } from 'lucide-react';
 import DigestCard from '@/components/DigestCard';
-import { DigestItem, DigestResponse, Les } from '@/types';
+import { DigestItem, DigestResponse, Les, LesCategorie, VSO_SUBTHEMAS } from '@/types';
 
 function formatDatum(iso: string) {
   return new Date(iso).toLocaleDateString('nl-NL', {
@@ -17,31 +17,132 @@ function formatDatum(iso: string) {
 type Tab = 'week' | 'totnutoe';
 type LessenSort = 'categorie' | 'datum';
 
+function korteDatum(iso: string) {
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? iso : d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
 function LesRegel({ les }: { les: Les }) {
   return (
-    <div className="text-sm text-brand-darkgray/80 leading-snug flex gap-3">
-      <span className="text-brand-lightgray font-mono text-xs mt-0.5 shrink-0">·</span>
-      <span>
-        {les.tekst}
-        {les.bronnen.length > 0 && (
-          <span className="text-brand-darkgray/70 ml-2 text-xs font-mono">
-            {les.bronnen.map((b, j) => (
-              <span key={b.id}>
-                <a
-                  href={b.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-brand-blue transition-colors"
-                  title={b.headline}
-                >
-                  {b.id}
-                </a>
-                {j < les.bronnen.length - 1 && ', '}
+    <article className="bg-brand-white rounded-brand shadow-soft border border-brand-lightgray/60 border-l-4 border-l-brand-blue/70 px-5 py-4 hover:shadow-brand transition-shadow duration-200">
+      {les.bronnen.length > 1 && (
+        <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-terracotta">
+          Bevestigd in {les.bronnen.length} uitspraken
+        </p>
+      )}
+      <p className="text-[15px] font-medium text-brand-darkgray leading-relaxed">{les.tekst}</p>
+      {les.bronnen.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {les.bronnen.map(b => {
+            const tucht = !b.id.startsWith('ECLI');
+            return (
+              <a
+                key={b.id}
+                href={b.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={b.id}
+                className={`group inline-flex items-center gap-1.5 max-w-full rounded-full px-3 py-1 text-xs transition-colors ${tucht
+                  ? 'bg-brand-bg-red text-brand-terracotta hover:bg-brand-terracotta/10'
+                  : 'bg-brand-bg-blue text-brand-blue hover:bg-brand-blue/10'
+                  }`}
+              >
+                <span className="truncate font-semibold">{b.headline || b.id}</span>
+                {b.datum && <span className="shrink-0 opacity-60">· {korteDatum(b.datum)}</span>}
+                <ExternalLink size={11} className="shrink-0 opacity-50 group-hover:opacity-100" />
+              </a>
+            );
+          })}
+        </div>
+      )}
+    </article>
+  );
+}
+
+function GroepKop({ label, aantal }: { label: string; aantal: number }) {
+  return (
+    <div className="flex items-center gap-3 mb-3">
+      <h3 className="text-xs font-bold uppercase tracking-wider text-brand-blue">{label}</h3>
+      <span className="text-[11px] font-semibold text-brand-darkgray/50 bg-brand-bg-soft rounded-full px-2 py-0.5">{aantal}</span>
+      <span className="flex-1 h-px bg-brand-lightgray/70" />
+    </div>
+  );
+}
+
+
+const CATEGORIE_VOLGORDE: LesCategorie[] = ['Vaststellingsovereenkomst', 'Schikkingsadvies', 'Onderhandelingen', 'Afbreken onderhandelingen', 'Mediation en vertrouwelijkheid', 'Misleiding en bedrog', 'Vertegenwoordiging en binding', 'Executie en executoriale titel', 'Hoedanigheid advocaat', 'Overig'];
+
+const sterksteEerst = (a: Les, b: Les) =>
+  b.bronnen.length - a.bronnen.length ||
+  (b.bronnen[0]?.datum ?? '').localeCompare(a.bronnen[0]?.datum ?? '');
+
+function CategorieOverzicht({ lessen, open, setOpen }: {
+  lessen: Les[];
+  open: LesCategorie | null;
+  setOpen: (c: LesCategorie | null) => void;
+}) {
+  const perCat = CATEGORIE_VOLGORDE
+    .map(cat => ({ cat, groep: lessen.filter(l => (l.categorie ?? 'Overig') === cat).sort(sterksteEerst) }))
+    .filter(x => x.groep.length > 0)
+    .sort((a, b) => b.groep.length - a.groep.length);
+
+  if (open) {
+    const groep = perCat.find(x => x.cat === open)?.groep ?? [];
+    const subs = open === 'Vaststellingsovereenkomst'
+      ? [...VSO_SUBTHEMAS, undefined].map(st => ({ st, ls: groep.filter(l => (st ? l.subthema === st : !l.subthema || !(VSO_SUBTHEMAS as readonly string[]).includes(l.subthema))) })).filter(x => x.ls.length > 0)
+      : [{ st: undefined, ls: groep }];
+    return (
+      <div className="animate-fade-in">
+        <button
+          type="button"
+          onClick={() => setOpen(null)}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-blue hover:text-brand-darkgray transition-colors mb-4"
+        >
+          <ArrowLeft size={14} /> Alle onderwerpen
+        </button>
+        <h2 className="text-xl font-bold text-brand-darkgray tracking-tight mb-1">{open}</h2>
+        <p className="text-xs text-brand-darkgray/50 mb-6">{groep.length} {groep.length === 1 ? 'les' : 'lessen'}</p>
+        <div className="space-y-8">
+          {subs.map(({ st, ls }) => (
+            <section key={st ?? 'rest'}>
+              {subs.length > 1 && <GroepKop label={st ?? 'Overig'} aantal={ls.length} />}
+              <div className="space-y-3">
+                {ls.map((les, i) => <LesRegel key={i} les={les} />)}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {perCat.map(({ cat, groep }) => {
+        const bevestigd = groep.filter(l => l.bronnen.length > 1).length;
+        return (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => { setOpen(cat); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="group text-left flex flex-col bg-brand-white rounded-brand shadow-soft border border-brand-lightgray/60 border-t-4 border-t-brand-blue/70 p-5 hover:shadow-brand-hover hover:border-brand-blue/30 transition-all duration-200"
+          >
+            <div className="flex items-baseline justify-between gap-3 mb-3">
+              <h3 className="font-bold text-brand-darkgray leading-snug">{cat}</h3>
+              <span className="shrink-0 text-2xl font-bold text-brand-blue tabular-nums leading-none">{groep.length}</span>
+            </div>
+            <p className="text-sm text-brand-darkgray/70 leading-relaxed line-clamp-3 flex-1">{groep[0].tekst}</p>
+            <div className="mt-4 flex items-center justify-between text-xs">
+              <span className="text-brand-darkgray/50">
+                {bevestigd > 0 ? `${bevestigd} bevestigd in meerdere uitspraken` : groep.length === 1 ? '1 les' : `${groep.length} lessen`}
               </span>
-            ))}
-          </span>
-        )}
-      </span>
+              <span className="inline-flex items-center gap-1 font-semibold text-brand-blue">
+                Bekijk <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+              </span>
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -58,6 +159,7 @@ export default function Home() {
   const [tokenInput, setTokenInput] = useState('');
   const [activeTab, setActiveTab] = useState<Tab>('week');
   const [lessenSort, setLessenSort] = useState<LessenSort>('categorie');
+  const [openCat, setOpenCat] = useState<LesCategorie | null>(null);
   const tokenRef = useRef<HTMLInputElement>(null);
   const disclaimerRef = useRef<HTMLDetailsElement>(null);
 
@@ -326,20 +428,7 @@ export default function Home() {
             </div>
             {lessen.length > 0 ? (
               lessenSort === 'categorie' ? (
-                <div className="space-y-6">
-                  {(['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Afbreken onderhandelingen', 'Misleiding en bedrog', 'Vertegenwoordiging en binding', 'Executie en executoriale titel', 'Mediation en vertrouwelijkheid', 'Hoedanigheid advocaat', 'Overig'] as const).map(cat => {
-                    const groep = lessen.filter(l => (l.categorie ?? 'Overig') === cat);
-                    if (groep.length === 0) return null;
-                    return (
-                      <div key={cat}>
-                        <p className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-2">{cat}</p>
-                        <div className="bg-brand-white rounded-brand shadow-brand p-5 space-y-2.5">
-                          {groep.map((les, i) => <LesRegel key={i} les={les} />)}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <CategorieOverzicht lessen={lessen} open={openCat} setOpen={setOpenCat} />
               ) : (
                 <div className="space-y-6">
                   {(() => {
@@ -361,8 +450,8 @@ export default function Home() {
                       groep.sort((a, b) => b.datum.localeCompare(a.datum));
                       return (
                         <div key={maandKey}>
-                          <p className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-2">{label}</p>
-                          <div className="bg-brand-white rounded-brand shadow-brand p-5 space-y-2.5">
+                          <GroepKop label={label} aantal={groep.length} />
+                          <div className="space-y-3">
                             {groep.map(({ les }, i) => <LesRegel key={i} les={les} />)}
                           </div>
                         </div>

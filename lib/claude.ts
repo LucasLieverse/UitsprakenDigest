@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { DigestItem, Les, RawItem } from '@/types';
+import { DigestItem, Les, RawItem, VSO_SUBTHEMAS } from '@/types';
 
 const client = new Anthropic();
 
@@ -157,22 +157,34 @@ Of als niet relevant:
   }
 }
 
-export async function mergeLessen(bestaand: Les[], nieuw: Les[]): Promise<Les[]> {
-  if (nieuw.length === 0) return bestaand;
+const CATEGORIEEN_LIJST = ['Schikkingsadvies', 'Vaststellingsovereenkomst', 'Onderhandelingen', 'Afbreken onderhandelingen', 'Misleiding en bedrog', 'Vertegenwoordiging en binding', 'Executie en executoriale titel', 'Mediation en vertrouwelijkheid', 'Hoedanigheid advocaat', 'Overig'];
 
-  const prompt = `Je krijgt twee lijsten lessen over de schikkingspraktijk van advocaten.
-Merge lessen die inhoudelijk hetzelfde zeggen, ook als de formulering verschilt.
-Gebruik bij een merge de bestaande formulering tenzij de nieuwe duidelijk beter is.
-Voeg bij een merge alle bronnen samen (geen duplicaten op basis van id).
-Voeg nieuwe lessen zonder equivalent gewoon toe aan de lijst.
-Retourneer uitsluitend een JSON-array in dit formaat, geen extra tekst:
-[{ "tekst": "...", "bronnen": [{ "id": "...", "headline": "...", "datum": "...", "url": "..." }] }]
+/**
+ * Voegt lessen samen die hetzelfde zeggen. Claude bepaalt alleen de groepering en de tekst;
+ * de bronnen worden hier in code gekoppeld, zodat er geen uitspraak kan wegvallen of verzonnen worden.
+ * `herschrijf: true` herformuleert ook lessen die niet samengevoegd worden (eenmalige opschoning).
+ */
+export async function mergeLessen(bestaand: Les[], nieuw: Les[], herschrijf = false): Promise<Les[]> {
+  const alle = [...bestaand, ...nieuw];
+  if (alle.length === 0 || (nieuw.length === 0 && !herschrijf)) return alle;
+  const fallback = alle;
 
-Bestaande lessen:
-${JSON.stringify(bestaand, null, 2)}
+  const lijst = alle.map((l, i) => `[${i}] (${l.categorie ?? 'Overig'}) ${l.tekst}`).join('\n');
 
-Nieuwe lessen:
-${JSON.stringify(nieuw, null, 2)}`;
+  const prompt = `Hieronder staan genummerde lessen over de schikkingspraktijk, elk afgeleid uit een uitspraak. Groepeer lessen die in de kern hetzelfde zeggen, ook als de formulering of de casus verschilt. Voeg niet samen wat alleen hetzelfde onderwerp heeft maar een andere les bevat.
+
+Per groep schrijf je één les:
+- Eén of hooguit twee zinnen, zakelijk en concreet, in de stijl van schikkenopdegang.nl: collegiaal, actief, geen imperatief, geen "je moet", geen eerste persoon, geen puntkomma's, geen gedachtestreepjes.
+- De les moet kloppen voor alle onderliggende uitspraken. Formuleer zo algemeen als nodig, maar niet algemener.
+${herschrijf ? '- Herformuleer ook losse lessen (groepen van één) in deze stijl.' : '- Laat de tekst van een groep van één ongewijzigd, tenzij er een nieuwe les bij komt.'}
+- Kies één categorie uit: ${CATEGORIEEN_LIJST.join(' | ')}.
+- Alleen bij categorie Vaststellingsovereenkomst: kies ook een subthema uit: ${VSO_SUBTHEMAS.join(' | ')}.
+
+Elk nummer komt precies één keer voor. Antwoord uitsluitend met een JSON-array, geen extra tekst:
+[{ "tekst": "...", "categorie": "...", "subthema": "... (alleen bij Vaststellingsovereenkomst)", "nummers": [0, 5] }]
+
+Lessen:
+${lijst}`;
 
   try {
     const message = await client.messages.create({
@@ -182,11 +194,32 @@ ${JSON.stringify(nieuw, null, 2)}`;
     });
     const text = message.content.find((b) => b.type === 'text')?.text ?? '';
     const match = text.match(/\[[\s\S]*\]/);
-    if (!match) return [...bestaand, ...nieuw];
-    return JSON.parse(match[0]) as Les[];
+    if (!match) return fallback;
+    const groepen = JSON.parse(match[0]) as { tekst: string; categorie: string; subthema?: string; nummers: number[] }[];
+
+    const gebruikt = new Set<number>();
+    const resultaat: Les[] = [];
+    for (const g of groepen) {
+      const nummers = (g.nummers ?? []).filter(n => Number.isInteger(n) && n >= 0 && n < alle.length && !gebruikt.has(n));
+      if (nummers.length === 0 || !g.tekst) continue;
+      nummers.forEach(n => gebruikt.add(n));
+      const bronnen = new Map<string, Les['bronnen'][number]>();
+      for (const n of nummers) for (const b of alle[n].bronnen) bronnen.set(b.id, b);
+      const categorie = (CATEGORIEEN_LIJST.includes(g.categorie) ? g.categorie : alle[nummers[0]].categorie ?? 'Overig') as Les['categorie'];
+      const subthema = categorie === 'Vaststellingsovereenkomst' && (VSO_SUBTHEMAS as readonly string[]).includes(g.subthema ?? '') ? g.subthema : undefined;
+      resultaat.push({
+        tekst: g.tekst.trim(),
+        categorie,
+        ...(subthema ? { subthema } : {}),
+        bronnen: [...bronnen.values()].sort((a, b) => b.datum.localeCompare(a.datum)),
+      });
+    }
+    // Wat Claude oversloeg blijft ongewijzigd behouden.
+    alle.forEach((l, i) => { if (!gebruikt.has(i)) resultaat.push(l); });
+    return resultaat;
   } catch (err) {
     console.error('Lessen merge fout:', err);
-    return [...bestaand, ...nieuw];
+    return fallback;
   }
 }
 

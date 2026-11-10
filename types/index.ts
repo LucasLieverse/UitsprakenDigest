@@ -54,9 +54,17 @@ export type LesCategorie =
   | 'Hoedanigheid advocaat'
   | 'Overig';
 
+export const VSO_SUBTHEMAS = [
+  'Totstandkoming en binding',
+  'Uitleg en finale kwijting',
+  'Ontbinding, bedenktijd en vernietiging',
+  'Nakoming en gevolgen',
+] as const;
+
 export interface Les {
   tekst: string;
   categorie: LesCategorie;
+  subthema?: string;
   bronnen: LesBron[];
 }
 
