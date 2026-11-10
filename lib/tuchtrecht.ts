@@ -1,5 +1,6 @@
 import { RawTuchbrechtItem } from '@/types';
 import { XMLParser } from 'fast-xml-parser';
+import { fetchVolledigeTekst } from '@/lib/rechtspraak';
 
 const ZOEKTERMEN = [
   'schikking',
@@ -88,6 +89,12 @@ export async function fetchTuchtrecht(dateFrom: string): Promise<RawTuchbrechtIt
       });
     }
   }
+
+  // Volledige tekst ophalen; de SRU-beschrijving is alleen een korte samenvatting.
+  await Promise.all(results.map(async (item) => {
+    const volledig = await fetchVolledigeTekst(item.identifier, item.url);
+    if (volledig.length > item.tekst.length) item.tekst = volledig;
+  }));
 
   return results;
 }

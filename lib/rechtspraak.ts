@@ -50,39 +50,31 @@ function heeftSettlementKeyword(tekst: string): boolean {
   return SETTLEMENT_RE.test(tekst);
 }
 
-// Fetch full uitspraak text and extract the most relevant passages.
-// Returns intro (first 1500 chars) + context around schikking keywords (up to 2000 chars).
-async function fetchVolledigeTekst(ecli: string): Promise<string> {
+// Volledige tekst van een uitspraak (ook tuchtrecht-ECLI's), zodat Claude het oordeel zelf leest
+// en niet alleen fragmenten. Afgekapt op MAX_TEKST tekens.
+export const MAX_TEKST = 40000;
+
+export async function fetchVolledigeTekst(ecli: string, fallbackUrl?: string): Promise<string> {
   try {
     const response = await fetch(`${CONTENT_BASE}?id=${encodeURIComponent(ecli)}`);
+    if (response.ok) {
+      const xml = await response.text();
+      const bodyMatch = xml.match(/<(?:uitspraak|conclusie)[^>]*>([\s\S]*?)<\/(?:uitspraak|conclusie)>/i);
+      if (bodyMatch) {
+        return bodyMatch[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, MAX_TEKST);
+      }
+    }
+  } catch { /* val terug op de webpagina */ }
+  if (!fallbackUrl) return '';
+  try {
+    const response = await fetch(fallbackUrl);
     if (!response.ok) return '';
-    const xml = await response.text();
-
-    const bodyMatch = xml.match(/<(?:uitspraak|conclusie)[^>]*>([\s\S]*?)<\/(?:uitspraak|conclusie)>/i);
-    if (!bodyMatch) return '';
-
-    const tekst = bodyMatch[1]
+    return (await response.text())
+      .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ')
       .replace(/<[^>]+>/g, ' ')
       .replace(/\s+/g, ' ')
-      .trim();
-
-    const intro = tekst.slice(0, 1500);
-
-    // Extract windows around schikking-related keywords
-    const keywords = /schikk|minnelijk|vaststellingsovereenkomst|finale kwijting/gi;
-    const snippets: string[] = [];
-    let match: RegExpExecArray | null;
-    while ((match = keywords.exec(tekst)) !== null && snippets.join('').length < 2000) {
-      const start = Math.max(0, match.index - 200);
-      const end = Math.min(tekst.length, match.index + 400);
-      snippets.push(tekst.slice(start, end));
-    }
-
-    const contextBlok = snippets.length > 0
-      ? '\n\n[...relevante passages...]\n' + snippets.join('\n[...]\n')
-      : '';
-
-    return (intro + contextBlok).slice(0, 5000);
+      .trim()
+      .slice(0, MAX_TEKST);
   } catch {
     return '';
   }

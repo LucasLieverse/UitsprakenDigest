@@ -20,7 +20,7 @@ Schrijfregels voor de samenvattingsvelden:
 - Headline: zakelijk en concreet, benoem de rechtsvraag of de kern van wat er speelt, niet wie de partijen zijn. Geen clickbait, geen vraagvorm, geen uitroepteken. Max 8 woorden.
 - Feiten: begin direct met waar het om draaide. Geen achtergrond die er niet toe doet. Noem partijen functioneel (werkgever, cliënt, verzekeraar), niet bij naam. Max 2 zinnen.
 - Oordeel: uitkomst eerst, dan de dragende grond. Bed wetsartikelen zonder omhaal in de zin in (bijvoorbeeld "art. 7:900 BW"). Max 3 zinnen.
-- Relevantie: twee of drie zinnen, nooit meer, vertaald naar de schikkingspraktijk. Elke zin bevat één gedachte; liever twee korte zinnen dan één lange met een puntkomma. De eerste zin is zelfstandig leesbaar als de kernles van de uitspraak, want die wordt los getoond. Daarna de praktische betekenis voor wie aan de onderhandelingstafel of op de gang staat. Benoem het kort als de les sterk afhangt van de omstandigheden van dit geval. Schrijf niet in de eerste persoon (geen "ik", "mijn duiding"). Geen imperatieven en geen "moet"; liever "het loont om", "dat pleit ervoor om", "wie ... doet er goed aan ...".
+- Relevantie: baseer de les op wat de rechter of tuchtrechter zelf oordeelt, niet op stellingen van partijen. Generaliseer niet verder dan de uitspraak draagt en noem de omstandigheden die doorslaggevend waren. Twee of drie zinnen, nooit meer, vertaald naar de schikkingspraktijk. Elke zin bevat één gedachte; liever twee korte zinnen dan één lange met een puntkomma. De eerste zin is zelfstandig leesbaar als de kernles van de uitspraak, want die wordt los getoond. Daarna de praktische betekenis voor wie aan de onderhandelingstafel of op de gang staat. Benoem het kort als de les sterk afhangt van de omstandigheden van dit geval. Schrijf niet in de eerste persoon (geen "ik", "mijn duiding"). Geen imperatieven en geen "moet"; liever "het loont om", "dat pleit ervoor om", "wie ... doet er goed aan ...".
 - Gebruik geen puntkomma's in de veldwaarden.
 
 Stijlregels die altijd gelden:
@@ -76,7 +76,7 @@ export async function processItem(item: RawItem): Promise<DigestItem | null> {
     return null;
   }
 
-  const tekstKort = tekst.slice(0, 5000);
+  const tekstKort = tekst.slice(0, 40000);
 
   const bronContext =
     item.bron === 'tuchtrecht'
@@ -175,7 +175,7 @@ export async function mergeLessen(bestaand: Les[], nieuw: Les[], herschrijf = fa
 
 Per groep schrijf je één les:
 - Eén of hooguit twee zinnen, zakelijk en concreet, in de stijl van schikkenopdegang.nl: collegiaal, actief, geen imperatief, geen "je moet", geen eerste persoon, geen puntkomma's, geen gedachtestreepjes.
-- De les moet kloppen voor alle onderliggende uitspraken. Formuleer zo algemeen als nodig, maar niet algemener.
+- De les moet kloppen voor alle onderliggende uitspraken. Formuleer zo algemeen als nodig, maar niet algemener, en laat doorslaggevende omstandigheden niet weg. Voeg bij twijfel niet samen.
 ${herschrijf ? '- Herformuleer ook losse lessen (groepen van één) in deze stijl.' : '- Laat de tekst van een groep van één ongewijzigd, tenzij er een nieuwe les bij komt.'}
 - Kies één categorie uit: ${CATEGORIEEN_LIJST.join(' | ')}.
 - Alleen bij categorie Vaststellingsovereenkomst: kies ook een subthema uit: ${VSO_SUBTHEMAS.join(' | ')}.

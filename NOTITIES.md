@@ -20,6 +20,12 @@ Stand van zaken, bijgewerkt 10 november 2026.
 - `lib/digest.ts`: de wekelijkse run roept `mergeLessen` aan, zodat nieuwe lessen bij bestaande komen.
 - `maxDuration` van de digest- en cron-route verhoogd naar 300 seconden (Vercel Pro).
 
+**Controle tegen de uitspraken (10 nov):**
+- Alle lessen zijn vergeleken met de volledige tekst van de uitspraken. Vóór correctie klopten er 4 van de 50. De oorzaak: het oude model zag maar 5.000 tekens (tuchtrecht alleen de korte beschrijving), en het samenvoegen generaliseerde te ver.
+- Teksten en categorieën zijn gecorrigeerd en twee keer opnieuw gecontroleerd. 9 lessen zonder schikkingsles zijn verwijderd, onder meer Wsnp, ontslag op staande voet en enquête. Er staan nu 41 lessen in. Na de hercontrole zijn er nog 4 "deels", die niet verder zijn nagelopen.
+- Code: Claude krijgt nu de volledige uitspraak (tot 40.000 tekens), ook bij tuchtrecht. De prompts vragen om niet verder te generaliseren dan de uitspraak.
+- Back-ups en rapporten staan in de scratchpad van de sessie (tijdelijk). Het rapport van vóór de correctie staat in `CONTROLE-LESSEN.md` (niet in git).
+
 ## Volgende stappen
 
 1. Lokaal nakijken (`npm run dev`), daarna committen en uitrollen met `npx vercel --prod`.
