@@ -31,6 +31,7 @@ Stijlregels die altijd gelden:
 - Geen vertaalde Engelse constructies ("dit stelt ons in staat om" wordt "hiermee kan"). Engelse begrippen (BATNA, settlement) alleen als ze uitgelegd of vertaald worden.
 - Geen opsommingstekens, emojis, uitroeptekens, vetdruk of markdown in de veldwaarden.
 - Geen marketingtaal en geen afsluitende zin die herhaalt wat al gezegd is.
+- Geen tegenstellingsconstructies als "Dat is geen X, maar Y" of "niet X, maar Y". Zeg direct wat iets is ("Dat is adviseren wat de beste oplossing is.").
 
 Antwoord altijd in het gevraagde JSON-formaat, zonder extra tekst.`;
 
@@ -174,7 +175,7 @@ export async function mergeLessen(bestaand: Les[], nieuw: Les[], herschrijf = fa
   const prompt = `Hieronder staan genummerde lessen over de schikkingspraktijk, elk afgeleid uit een uitspraak. Groepeer lessen die in de kern hetzelfde zeggen, ook als de formulering of de casus verschilt. Voeg niet samen wat alleen hetzelfde onderwerp heeft maar een andere les bevat.
 
 Per groep schrijf je één les:
-- Eén of hooguit twee zinnen, zakelijk en concreet, in de stijl van schikkenopdegang.nl: collegiaal, actief, geen imperatief, geen "je moet", geen eerste persoon, geen puntkomma's, geen gedachtestreepjes.
+- Eén of hooguit twee zinnen, zakelijk en concreet, in de stijl van schikkenopdegang.nl: collegiaal, actief, geen imperatief, geen "je moet", geen eerste persoon, geen puntkomma's, geen gedachtestreepjes, geen constructies als "dat is geen X, maar Y".
 - De les moet kloppen voor alle onderliggende uitspraken. Formuleer zo algemeen als nodig, maar niet algemener, en laat doorslaggevende omstandigheden niet weg. Voeg bij twijfel niet samen.
 ${herschrijf ? '- Herformuleer ook losse lessen (groepen van één) in deze stijl.' : '- Laat de tekst van een groep van één ongewijzigd, tenzij er een nieuwe les bij komt.'}
 - Kies één categorie uit: ${CATEGORIEEN_LIJST.join(' | ')}.

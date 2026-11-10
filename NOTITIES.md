@@ -26,6 +26,10 @@ Stand van zaken, bijgewerkt 10 november 2026.
 - Code: Claude krijgt nu de volledige uitspraak (tot 40.000 tekens), ook bij tuchtrecht. De prompts vragen om niet verder te generaliseren dan de uitspraak.
 - Back-ups en rapporten staan in de scratchpad van de sessie (tijdelijk). Het rapport van vóór de correctie staat in `CONTROLE-LESSEN.md` (niet in git).
 
+**Opgeschoond en vlot herschreven (10 nov):** de vier lessen die deels klopten zijn aangepast of verwijderd, net als de les over gevolmachtigden, die niet over schikken ging. 28 lessen zijn vlotter herschreven in de schikkenopdegang-stijl, elk opnieuw gecontroleerd tegen de uitspraak. 10 lessen haalden de controle in herschreven vorm niet en hebben hun vorige, al gecontroleerde tekst gehouden. Er staan nu 38 lessen in.
+
+Let op het tegoed: de API-credits raakten op 10 nov op door de controles. Automatisch bijladen is verstandig, anders valt de wekelijkse run stil.
+
 ## Volgende stappen
 
 1. Lokaal nakijken (`npm run dev`), daarna committen en uitrollen met `npx vercel --prod`.
